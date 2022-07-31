@@ -124,10 +124,10 @@ final class DiffusionSubversionServeSSHWorkflow
       }
 
       if (!$io_channel->isOpenForReading()) {
-        throw new Exception(
-          pht(
-            'Client closed connection before sending a complete protocol '.
-            'frame.'));
+//        throw new Exception(
+//          pht(
+//            'Client closed connection before sending a complete protocol '.
+//            'frame.'));
       }
 
       // If the client has disconnected, kill the subprocess and bail.

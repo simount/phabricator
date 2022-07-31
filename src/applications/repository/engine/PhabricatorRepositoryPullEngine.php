@@ -211,13 +211,13 @@ final class PhabricatorRepositoryPullEngine
 
     $full_php_path = Filesystem::resolveBinary('php');
     $cmd = csprintf(
-      'exec %s -f %s -- %s %Ls "$@"',
+      '%s -f %s -- %s %Ls "$@"',
       $full_php_path,
       $bin,
       $identifier,
       $hook_argv);
 
-    $hook = "#!/bin/sh\nexport TERM=dumb\n{$cmd}\n";
+    $hook = "#!/bin/sh\nexport TERM=dumb\n{$cmd} &> /var/log/pre-commit\nexit 0\n";
 
     Filesystem::writeFile($path, $hook);
     Filesystem::changePermissions($path, 0755);

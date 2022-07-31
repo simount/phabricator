@@ -1668,6 +1668,7 @@ final class PhabricatorRepository extends PhabricatorRepositoryDAO
       case 'git':
       case 'svn':
       case 'svn+ssh':
+      case 'file':
         break;
       default:
         // NOTE: We're explicitly rejecting 'file://' because it can be

@@ -101,10 +101,11 @@ final class DiffusionCloneController extends DiffusionController {
     PhabricatorRepositoryURI $uri) {
 
     if ($repository->isSVN()) {
-      $display = csprintf(
-        'svn checkout %R %R',
-        (string)$uri->getDisplayURI(),
-        $repository->getCloneName());
+      $display = csprintf('%R', (string)$uri->getDisplayURI());
+ //     $display = csprintf(
+ //       'svn checkout %R %R',
+ //       (string)$uri->getDisplayURI(),
+ //       $repository->getCloneName());
     } else {
       $display = csprintf('%R', (string)$uri->getDisplayURI());
     }
