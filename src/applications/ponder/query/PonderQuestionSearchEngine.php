@@ -169,6 +169,9 @@ final class PonderQuestionSearchEngine
             ->setSlim(true)
             ->setHandles($project_handles));
       }
+          
+      $tokens = $this->getTokensForPHO($viewer, $question);
+      $item->addAttribute($tokens);
 
       $view->addItem($item);
     }
@@ -197,6 +200,62 @@ final class PonderQuestionSearchEngine
       ->addAction($create_button);
 
       return $view;
+  }
+
+  private function getTokensForPHO($viewer, $task) {
+    $tokens_given = id(new PhabricatorTokenGivenQuery())
+        ->setViewer($viewer)
+        ->withObjectPHIDs(array($task->getPHID()))
+        ->execute();
+
+    if (!$tokens_given) {
+      return null;
+    }
+
+    $tokens = id(new PhabricatorTokenQuery())
+        ->setViewer($viewer)
+        ->withPHIDs(mpull($tokens_given, 'getTokenPHID'))
+        ->execute();
+    $tokens = mpull($tokens, null, 'getPHID');
+
+    $author_phids = mpull($tokens_given, 'getAuthorPHID');
+    $handles = id(new PhabricatorHandleQuery())
+        ->setViewer($viewer)
+        ->withPHIDs($author_phids)
+        ->execute();
+
+    Javelin::initBehavior('phabricator-tooltips');
+
+    $list = array();
+    foreach ($tokens_given as $token_given) {
+      $token = $token_given->getToken();
+
+      $aural = javelin_tag(
+        'span',
+        array(
+          'aural' => true,
+        ),
+        pht(
+          '"%s" token, awarded by %s.',
+          $token->getName(),
+          $handles[$token_given->getAuthorPHID()]->getName()));
+
+      $list[] = javelin_tag(
+        'span',
+        array(
+          'sigil' => 'has-tooltip',
+          'class' => 'token-icon',
+          'meta' => array(
+            'tip' => $handles[$token_given->getAuthorPHID()]->getName(),
+          ),
+        ),
+        array(
+          $aural,
+          $token->renderIcon(),
+        ));
+    }
+
+    return $list;
   }
 
 }
