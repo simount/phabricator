@@ -1,10 +1,11 @@
 <?php
 
 function phabricator_date($epoch, PhabricatorUser $user) {
+  $date_key = PhabricatorDateFormatSetting::SETTINGKEY;
   return phabricator_format_local_time(
     $epoch,
     $user,
-    phutil_date_format($epoch));
+    $user->getUserSetting($date_key));
 }
 
 function phabricator_relative_date($epoch, $user, $on = false) {
@@ -72,12 +73,13 @@ function phabricator_absolute_datetime($epoch, $user) {
 }
 
 function phabricator_datetime($epoch, $user) {
+  $date_key = PhabricatorDateFormatSetting::SETTINGKEY;
   $time_key = PhabricatorTimeFormatSetting::SETTINGKEY;
   return phabricator_format_local_time(
     $epoch,
     $user,
-    pht('%s, %s',
-      phutil_date_format($epoch),
+    pht('%s %s',
+      $user->getUserSetting($date_key),
       $user->getUserSetting($time_key)));
 }
 
